@@ -1,0 +1,20 @@
+<div class="container">
+    <form (submit)="onFormSubmit(formElement)" #formElement="ngForm">
+    <mat-form-field appearance="outline" hideRequiredMarker>
+      <mat-label>Name</mat-label>
+      <input matInput type="text" name="name" ngModel #name="ngModel" minlength="3" required>
+      <mat-error *ngIf="name.invalid">Pretty sure the name your mama gave you is at least 3 characters long.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" hideRequiredMarker>
+      <mat-label>Surname</mat-label>
+      <input matInput type="text" name="surname" ngModel #surname="ngModel" minlength="3" required>
+      <mat-error *ngIf="surname.invalid">Man, those letters don't cost so put some more will you?</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" hideRequiredMarker>
+      <mat-label>Plate Nr.</mat-label>
+      <input matInput type="text" name="plateNr" ngModel #plateNr="ngModel" minlength="7" required>
+      <mat-error *ngIf="plateNr.invalid">Plate number should be in format: ABC 123</mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Save</button>
+  </form>
+</div>

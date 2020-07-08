@@ -15,13 +15,15 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { PlatesComponent } from './plates/plates.component';
 import { PlateListComponent } from './plates/plate-list/plate-list.component';
+import { PlateCreateComponent } from './plates/plate-create/plate-create.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     PlatesComponent,
-    PlateListComponent
+    PlateListComponent,
+    PlateCreateComponent
   ],
   imports: [
     BrowserModule,
