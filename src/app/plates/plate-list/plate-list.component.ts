@@ -15,16 +15,23 @@ import { PlateService } from '../shared/plate.service';
 })
 export class PlateListComponent implements OnInit, OnDestroy {
 
-  private plates: Plate[];
+  // Initialize as empty array
+  private plates: Plate[] = [];
+  // Subscription to the Plates change EventEmitter
+  private platesChangeSubscription: Subscription = Subscription.EMPTY;
+
   displayedColumns: string[] = ['name', 'surname', 'plateNr'];
   dataSource: MatTableDataSource<Plate>;
-  private platesSubscription: Subscription;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private plateService: PlateService) {
+    this.platesChangeSubscription = plateService.getPlatesChanges()
+      .subscribe((changedPlates: Plate[]) => {
+        this.plates = changedPlates;
+        this.updateDataSource(this.plates);
+      });
   }
 
   private updateDataSource(plates: Plate[]): void {
@@ -34,36 +41,19 @@ export class PlateListComponent implements OnInit, OnDestroy {
   }
 
   // ngOnInit(): void {
-  //   this.plateService.getPlates().then(
-  //     plates => {
-  //       this.updateDataSource(plates);
-  //
-  //       // Subscribe to Plates Subject
-  //       this.platesSubscription = this.plateService.getPlatesSubjectAsObservable()
-  //         .subscribe((refreshedPlates: Plate[]) => {
-  //           this.plates = refreshedPlates;
-  //           this.updateDataSource(this.plates);
-  //         });
-  //     }
-  //   );
+  //   this.plateService.getPlates()
+  //     .then(plates => this.updateDataSource(plates));
   // }
 
   // Initialization version with newer async syntax
   async ngOnInit(): Promise<void> {
     this.plates = await this.plateService.getPlates();
     this.updateDataSource(this.plates);
-
-    // Subscribe to Plates Subject
-    this.platesSubscription = this.plateService.getPlatesSubjectAsObservable()
-      .subscribe((refreshedPlates: Plate[]) => {
-        this.plates = refreshedPlates;
-        this.updateDataSource(this.plates);
-      });
   }
 
   ngOnDestroy(): void {
     // To avoid memory leaks unsubscribe if component is destroyed
-    this.platesSubscription.unsubscribe();
+    this.platesChangeSubscription.unsubscribe();
   }
 
 }

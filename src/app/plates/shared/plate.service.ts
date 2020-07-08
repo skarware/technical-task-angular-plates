@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Plate } from './plate.model';
 
 // import mock-data until back-end part is build
@@ -8,24 +8,24 @@ import { Observable, Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class PlateService {
-
-  // For time being let us return mock up data from PLATES
-  private plates: Plate[] = PLATES;
-  private platesSubject: Subject<Plate[]> = new Subject<Plate[]>();
-
-  // for time being until database is connected
-  private currentId = 10;
+export class PlateService implements OnDestroy {
 
   constructor() {
   }
+
+  // For time being let us return mock up data from PLATES
+  private plates: Plate[] = PLATES;
+  private platesChanges: Subject<Plate[]> = new Subject<Plate[]>();
+
+  // for time being until database is connected
+  private currentId = 10;
 
   getPlates(): Promise<Plate[]> {
     return Promise.resolve([...this.plates]);
   }
 
-  getPlatesSubjectAsObservable(): Observable<Plate[]> {
-    return this.platesSubject.asObservable();
+  getPlatesChanges(): Observable<Plate[]> {
+    return this.platesChanges.asObservable();
   }
 
   addPlateRecord(name: string, surname: string, plateNr: string): void {
@@ -36,6 +36,10 @@ export class PlateService {
       plateNr
     };
     this.plates.push(plate);
-    this.platesSubject.next([...this.plates]);
+    this.platesChanges.next([...this.plates]);
+  }
+
+  ngOnDestroy(): void {
+    this.platesChanges.complete();
   }
 }
