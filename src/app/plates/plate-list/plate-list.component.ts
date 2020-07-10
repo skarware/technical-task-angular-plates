@@ -17,42 +17,44 @@ export class PlateListComponent implements OnInit, OnDestroy {
 
   // Initialize as empty array
   private plates: Plate[] = [];
-  // Subscription to the Plates change EventEmitter
+  // Initialize as empty subscription then inside constructor block subscribe to plate data changes
   private platesChangeSubscription: Subscription = Subscription.EMPTY;
 
+  // Initialize columns to render on Material table
   displayedColumns: string[] = ['name', 'surname', 'plateNr'];
+  // Define dataSource for Material table
   dataSource: MatTableDataSource<Plate>;
 
+  // Define Paginator and Sort functionality to Material table
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
+  // Inject PlateService into this component as private class member
   constructor(private plateService: PlateService) {
-    this.platesChangeSubscription = plateService.getPlatesChanges()
-      .subscribe((changedPlates: Plate[]) => {
-        this.plates = changedPlates;
-        this.updateDataSource(this.plates);
-      });
   }
 
-  private updateDataSource(plates: Plate[]): void {
+  // Function to update Material table dataSource
+  private updateMatTableDataSource(plates: Plate[]): void {
     this.dataSource = new MatTableDataSource<Plate>(plates);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  // ngOnInit(): void {
-  //   this.plateService.getPlates()
-  //     .then(plates => this.updateDataSource(plates));
-  // }
-
-  // Initialization version with newer async syntax
-  async ngOnInit(): Promise<void> {
-    this.plates = await this.plateService.getPlates();
-    this.updateDataSource(this.plates);
+  // Initialization version
+  ngOnInit(): void {
+    // Fetch plates data from API
+    this.plateService.fetchPlates();
+    // Subscribe to the platesChange EventEmitter and listen for new data
+    this.platesChangeSubscription = this.plateService.getPlatesChanges()
+      .subscribe((newPlatesData: Plate[]) => {
+        // Then platesChange update the plates with new data
+        this.plates = newPlatesData;
+        this.updateMatTableDataSource(this.plates);
+      });
   }
 
   ngOnDestroy(): void {
-    // To avoid memory leaks unsubscribe if component is destroyed
+    // To avoid memory leaks unsubscribe if this component is destroyed
     this.platesChangeSubscription.unsubscribe();
   }
 
