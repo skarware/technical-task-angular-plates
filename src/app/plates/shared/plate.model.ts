@@ -1,5 +1,5 @@
 export interface Plate {
-  id: number;
+  id: string;
   plateNr: string;
   name: string;
   surname: string;

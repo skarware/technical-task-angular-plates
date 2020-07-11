@@ -21,7 +21,7 @@ export class PlateListComponent implements OnInit, OnDestroy {
   private platesChangeSubscription: Subscription = Subscription.EMPTY;
 
   // Initialize columns to render on Material table
-  displayedColumns: string[] = ['name', 'surname', 'plateNr'];
+  displayedColumns: string[] = ['name', 'surname', 'plateNr', 'buttons'];
   // Define dataSource for Material table
   dataSource: MatTableDataSource<Plate>;
 
@@ -58,4 +58,7 @@ export class PlateListComponent implements OnInit, OnDestroy {
     this.platesChangeSubscription.unsubscribe();
   }
 
+  onDelete(id: string): void {
+    this.plateService.deletePlate(id);
+  }
 }

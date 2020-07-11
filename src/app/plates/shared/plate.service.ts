@@ -50,19 +50,34 @@ export class PlateService implements OnDestroy {
       plateNr
     };
 
-    // Persist new record into database through API
+    // Persist new plate into database through API
     this.http.post<Plate>(BACKEND_HOST_URL + API_PATH, plate)
       .subscribe((response) => {
-        // If new data persisted successfully on database only then push new data into local plates array
-        this.plates.push(plate);
-        // Multicast new data to platesChanges observers/subscribers
-        this.platesChanges.next([...this.plates]);
-        console.log(response);  /////// FOR DEVELOPING PURPOSES ///////
+        // If new data persisted successfully on database only then:
+        {
+          // Replace null id with one from document persisted into database
+          plate.id = response.id;
+          // Push new data into local plates array
+          this.plates.push(plate);
+          // Multicast new data to platesChanges observers/subscribers
+          this.platesChanges.next([...this.plates]);
+        }
       });
   }
 
   ngOnDestroy(): void {
     // To avoid memory leaks set as complete if this component is destroyed
     this.platesChanges.complete();
+  }
+
+  // Delete plate from database through API
+  deletePlate(id: string): void {
+    this.http.delete<Plate>(BACKEND_HOST_URL + API_PATH + '/' + id)
+      .subscribe((response) => {
+        // If plate deleted from database successfully only then remove it from local plates array
+        this.plates = this.plates.filter((el) => el.id !== id);
+        // Multicast modified this.plates array to platesChanges observers/subscribers
+        this.platesChanges.next([...this.plates]);
+      });
   }
 }
