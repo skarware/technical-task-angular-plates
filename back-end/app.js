@@ -1,5 +1,22 @@
 const express = require('express');
 const logger = require('morgan');
+const mongoose = require('mongoose')
+
+// Get MongoDB user and password from Environment Variables
+const DB_USER = process.env.MONGODB_USER;
+const DB_PASSWORD = process.env.MONGODB_PASSWORD;
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://' + DB_USER + ':' + DB_PASSWORD + '@cluster0.bt62z.mongodb.net/angular-plates?retryWrites=true&w=majority', {
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+})
+  .then(() => {
+    console.log('Successfully connected to MongoDB')
+  })
+  .catch(() => {
+    console.error('Failed to connect to MongoDB')
+  });
 
 const platesRouter = require('./routes/plates');
 

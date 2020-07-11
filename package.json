@@ -9,7 +9,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:backend": "DEBUG=back-end:* node ./back-end/bin/www",
-    "start:backend-dev": "DEBUG=express:* nodemon ./back-end/bin/www"
+    "start:backend-win": "set DEBUG=back-end:* & node ./back-end/bin/www",
+    "start:backend-dev": "DEBUG=express:* nodemon ./back-end/bin/www",
+    "start:backend-dev-win": "set DEBUG=express:* & nodemon ./back-end/bin/www"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +27,7 @@
     "@angular/router": "~10.0.2",
     "debug": "^4.1.1",
     "express": "^4.17.1",
+    "mongoose": "^5.9.23",
     "morgan": "^1.10.0",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
