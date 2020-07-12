@@ -8,7 +8,8 @@ import { PlatesComponent } from './plates/plates.component';
 const routes: Routes = [
   { path: '', component: PlatesComponent },
   { path: 'list-plates', component: PlateListComponent },
-  { path: 'create-plate', component: PlateCreateComponent }
+  { path: 'create-plate', component: PlateCreateComponent },
+  { path: 'edit-plate/:id', component: PlateCreateComponent }
 ];
 
 // The @NgModule metadata initializes the router and starts it listening for browser location changes.
