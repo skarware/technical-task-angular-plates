@@ -4,4 +4,9 @@ table {
 
 .mat-column-buttons {
   width: min-content;
+  padding: 0 !important;
+}
+
+.mat-button {
+  padding: 0 !important;
 }

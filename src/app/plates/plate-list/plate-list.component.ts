@@ -29,6 +29,8 @@ export class PlateListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
+  public isLoading: boolean;
+
   // Inject PlateService into this component as private class member
   constructor(private plateService: PlateService) {
   }
@@ -42,11 +44,13 @@ export class PlateListComponent implements OnInit, OnDestroy {
 
   // Initialization version
   ngOnInit(): void {
+    this.isLoading = true;
     // Fetch plates data from API
     this.plateService.fetchPlates();
     // Subscribe to the platesChange EventEmitter and listen for new data
     this.platesChangeSubscription = this.plateService.getPlatesChanges()
       .subscribe((newPlatesData: Plate[]) => {
+        this.isLoading = false;
         // Then platesChange update the plates with new data
         this.plates = newPlatesData;
         this.updateMatTableDataSource(this.plates);

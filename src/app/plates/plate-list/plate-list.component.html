@@ -1,4 +1,5 @@
-<div class="mat-elevation-z8">
+<mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+<div class="mat-elevation-z8" *ngIf="!isLoading">
   <table mat-table [dataSource]="dataSource" matSort matSortActive="name" matSortDirection="asc">
 
     <!-- Name Column -->

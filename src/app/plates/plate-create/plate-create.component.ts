@@ -18,6 +18,8 @@ export class PlateCreateComponent implements OnInit {
   private plateToEditId: string;
   public plateToEdit: Plate;
 
+  public isLoading: boolean;
+
   // Inject dependencies
   constructor(
     private plateService: PlateService,
@@ -34,9 +36,11 @@ export class PlateCreateComponent implements OnInit {
           // If id param exists set up component into edit mode
           this.isModeEdit = true;
           this.plateToEditId = paramMap.get('id');
+          this.isLoading = true;
           // this.plateToEdit will be used to populate Edit FORM from template with current Plate values
           this.plateService.fetchPlate(this.plateToEditId)
             .subscribe((response) => {
+                this.isLoading = false;
                 this.plateToEdit = response;
               }
             );
@@ -53,6 +57,7 @@ export class PlateCreateComponent implements OnInit {
     if (formElement.invalid) {
       return;
     }
+    this.isLoading = true;
 
     // Initialize plate properties
     const name = formElement.value.name;
