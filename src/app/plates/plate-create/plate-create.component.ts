@@ -71,6 +71,8 @@ export class PlateCreateComponent implements OnInit {
       this.plateService.addPlate(name, surname, plateNr);
     }
 
+    this.isLoading = false;
+
     // Reset the form in any case
     formElement.resetForm();
   }

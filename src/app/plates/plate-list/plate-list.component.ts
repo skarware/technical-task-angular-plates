@@ -11,31 +11,43 @@ import { PlateService } from '../shared/plate.service';
 @Component({
   selector: 'app-plate-list',
   templateUrl: './plate-list.component.html',
-  styleUrls: ['./plate-list.component.css']
+  styleUrls: [ './plate-list.component.css' ]
 })
 export class PlateListComponent implements OnInit, OnDestroy {
+  // Define Material progress-bar display/hide boolean
+  public isLoading: boolean;
 
-  // Initialize as empty array
-  private plates: Plate[] = [];
   // Initialize as empty subscription then inside constructor block subscribe to plate data changes
   private platesChangeSubscription: Subscription = Subscription.EMPTY;
 
   // Initialize columns to render on Material table
-  displayedColumns: string[] = ['name', 'surname', 'plateNr', 'buttons'];
+  displayedColumns: string[] = [ 'name', 'surname', 'plateNr', 'buttons' ];
   // Define dataSource for Material table
   dataSource: MatTableDataSource<Plate>;
 
   // Define Paginator and Sort functionality to Material table
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  private paginator: MatPaginator;
+  private sort: MatSort;
 
-  public isLoading: boolean;
+  @ViewChild(MatSort, { static: false }) set matSort(ms: MatSort) {
+    this.sort = ms;
+    if (this.sort) {
+      this.dataSource.sort = this.sort;
+    }
+  }
+
+  @ViewChild(MatPaginator, { static: false }) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
 
   // Inject PlateService into this component as private class member
   constructor(private plateService: PlateService) {
   }
 
-  // Function to update Material table dataSource
+  // Fn to update Material table dataSource and its attributes
   private updateMatTableDataSource(plates: Plate[]): void {
     this.dataSource = new MatTableDataSource<Plate>(plates);
     this.dataSource.paginator = this.paginator;
@@ -51,15 +63,19 @@ export class PlateListComponent implements OnInit, OnDestroy {
     this.platesChangeSubscription = this.plateService.getPlatesChanges()
       .subscribe((newPlatesData: Plate[]) => {
         this.isLoading = false;
-        // Then platesChange update the plates with new data
-        this.plates = newPlatesData;
-        this.updateMatTableDataSource(this.plates);
+        // Then platesChange update the dataSource with new data
+        this.updateMatTableDataSource(newPlatesData);
       });
   }
 
   ngOnDestroy(): void {
     // To avoid memory leaks unsubscribe if this component is destroyed
     this.platesChangeSubscription.unsubscribe();
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   onDelete(id: string): void {
